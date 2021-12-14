@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.UsageLogDao">
+  <sql id="Base_Column_List">
+    id, `datetime`, group_name, msg, qq, reply, username
+  </sql>
+  <select id="getCount" resultType="java.lang.Integer">
+    select count(1) from usage_log
+  </select>
+</mapper>

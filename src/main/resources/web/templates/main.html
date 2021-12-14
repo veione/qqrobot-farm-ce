@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>QQ Robot Farm</title>
+	<script type="text/javascript" th:src="@{/static/js/jquery-3.4.1.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/main.js}"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/main.css}">
+</head>
+<body>
+	<h1>QQ Robot Farm</h1>
+	<div>
+		<div class="inline_block">
+			<p style="margin-top: 0;">内存使用情况：</p>
+			<table class="border">
+				<tr>
+					<th></th>
+					<th>堆</th>
+					<th>非堆</th>
+				</tr>
+				<tr>
+					<td>初始大小</td>
+					<td th:text="${systemInfo.getHeapInit()}"
+					    class="right">128MB</td>
+					<td th:text="${systemInfo.getNonHeapInit()}"
+					    class="right">128MB</td>
+				</tr>
+				<tr>
+					<td>已使用</td>
+					<td th:text="${systemInfo.getHeapUsed()}"
+					    class="right">28MB</td>
+					<td th:text="${systemInfo.getNonHeapUsed()}"
+					    class="right">28MB</td>
+				</tr>
+				<tr>
+					<td>已申请内存</td>
+					<td th:text="${systemInfo.getHeapCommited()}"
+					    class="right">512MB</td>
+					<td th:text="${systemInfo.getNonHeapCommited()}" class="right">512MB</td>
+				</tr>
+				<tr>
+					<td>最大内存</td>
+					<td th:text="${systemInfo.getHeapMax()}"
+					    class="right">1024MB</td>
+					<td th:text="'N/A'" class="right">1024MB</td>
+				</tr>
+				<tr>
+					<td>内存使用率</td>
+					<td th:text="${systemInfo.getHeapPercentUsage()}" class="right">20%</td>
+					<td th:text="${systemInfo.getNonHeapPercentUsage()}" class="right">20%</td>
+				</tr>
+			</table>
+		</div>
+		<div class="inline_block left_margin">
+			<p style="margin-top: 0;">数据库连接池使用情况：</p>
+			<table class="border">
+				<tr>
+					<th></th>
+					<th>MySQL</th>
+					<th>SQLite</th>
+				</tr>
+				<tr>
+					<td>正在使用连接数</td>
+					<td th:text="${dataSource.get('mysql.using')}"
+					    class="right">1</td>
+					<td th:text="${dataSource.get('sqlite.using')}"
+					    class="right">1</td>
+				</tr>
+				<tr>
+					<td>空闲连接数</td>
+					<td th:text="${dataSource.get('mysql.free')}"
+					    class="right">9</td>
+					<td th:text="${dataSource.get('sqlite.free')}"
+					    class="right">9</td>
+				</tr>
+				<tr>
+					<td>最小连接数</td>
+					<td th:text="${dataSource.get('mysql.minSize')}"
+					    class="right">1</td>
+					<td th:text="${dataSource.get('sqlite.minSize')}"
+					    class="right">1</td>
+				</tr>
+				<tr>
+					<td>最大连接数</td>
+					<td th:text="${dataSource.get('mysql.maxSize')}"
+					    class="right">10</td>
+					<td th:text="${dataSource.get('sqlite.maxSize')}"
+					    class="right">10</td>
+				</tr>
+				<tr>
+					<td>总连接数</td>
+					<td th:text="${dataSource.get('mysql.connectionCount')}"
+					    class="right">10</td>
+					<td th:text="${dataSource.get('sqlite.connectionCount')}"
+					    class="right">10</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<p>开关：</p>
+	<table class="border">
+		<tr>
+			<td class="right">
+				重连时发送测试消息：<!--
+				--><span th:text="${willSendTestMessageOnRelogin}">关</span>
+			</td>
+			<td>
+				<input type="button" value="调整" class="switch_btn"
+			           onclick="switchWillSendTestMessageOnRelogin()" />
+			</td>
+		</tr>
+		<tr>
+			<td class="right">
+				发送失败时重发：<!--
+				--><span th:text="${willResendOnSendFailed}">关</span>
+			</td>
+			<td>
+				<input type="button" value="调整" class="switch_btn"
+				       onclick="switchWillResendOnSendFailed()" />
+			</td>
+		</tr>
+	</table>
+	<p>运行信息：</p>
+	<p>
+		<a th:href="@{/usageLog}">使用记录</a>&emsp;
+		<a th:href="@{/exception}">异常记录</a>&emsp;
+		<a th:href="@{/console}">控制台输出</a>
+	</p>
+	<p>操作：</p>
+	<p>
+		<input type="button" value="重新登录" onclick="relogin(this)" />
+		<input class="left_margin" type="button" value="发送测试消息"
+		       onclick="sendTestMessage(this)" />
+	</p>
+	<div style="text-align: right; width: 80%; margin: 0 auto;">
+		<a href="/">返回主页</a>
+	</div>
+</body>
+<script th:inline="javascript">
+    let contextPath = /*[[@{/}]]*/ "";
+</script>
+</html>

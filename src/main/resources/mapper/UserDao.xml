@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.UserDao">
+  <sql id="Base_Column_List">
+    qq, assets, location_id, water_remaining, last_time_sow_seed, `level`, task_id
+  </sql>
+  <update id="plusAssets">
+    update `user` set assets = assets + #{amount} where qq = #{qq};
+  </update>
+  <update id="setTaskIdNull">
+    update `user` set task_id = null where qq = #{qq}
+  </update>
+  <select id="findAndLock" resultType="de.honoka.qqrobot.farm.entity.farm.User">
+    select <include refid="Base_Column_List" /> from `user`
+    where qq = #{qq} for update
+  </select>
+</mapper>

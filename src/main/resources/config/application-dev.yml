@@ -1,0 +1,27 @@
+# 测试配置
+honoka:
+  qqrobot:
+    qq: 100000
+    password: qqpassword
+    admin-qq: 100001
+    developing-group: 100002
+    command-prefix: '%'
+    default-enabled: false
+    mirai:
+      redirect-logs: false
+      resend-on-send-failed: false
+      send-test-message-on-relogin: false
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: "jdbc:mysql://localhost:3306/qqrobot_farm?serverTimezone=GMT%2B8&\
+          rewriteBatchedStatements=true"
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    de.honoka.qqrobot.farm.dao: debug

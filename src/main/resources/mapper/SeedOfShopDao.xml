@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.SeedOfShopDao">
+  <sql id="Base_Column_List">
+    location_id, seed_id, `type`, price
+  </sql>
+  <update id="update">
+    update seed_shop set `type` = #{type}, price = #{price}
+    where location_id = #{locationId} and seed_id = #{seedId}
+  </update>
+  <delete id="deleteAllSeedOfShop">
+    delete from seed_shop where location_id = #{locationId}
+  </delete>
+  <delete id="delete">
+    delete from seed_shop where location_id = #{locationId} and seed_id = #{seedId}
+  </delete>
+  <select id="findAndLock" resultType="de.honoka.qqrobot.farm.entity.farm.SeedOfShop">
+    select <include refid="Base_Column_List" /> from seed_shop
+    where seed_id = #{seedId} and location_id = #{locationId} for update
+  </select>
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.TrainTicketDao">
+  <sql id="Base_Column_List">
+    user_qq, ticket_id, arrive_time, from_station, price, start_time, to_station, train_no, 
+    to_location, used, from_location
+  </sql>
+  <update id="update" parameterType="de.honoka.qqrobot.farm.entity.farm.TrainTicket">
+    update train_ticket
+    set arrive_time = #{arriveTime,jdbcType=TIMESTAMP},
+      from_station = #{fromStation,jdbcType=VARCHAR},
+      price = #{price,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      to_station = #{toStation,jdbcType=VARCHAR},
+      train_no = #{trainNo,jdbcType=VARCHAR},
+      to_location = #{toLocation,jdbcType=INTEGER},
+      used = #{used,jdbcType=BIT},
+      from_location = #{fromLocation,jdbcType=INTEGER}
+    where user_qq = #{userQq,jdbcType=BIGINT}
+      and ticket_id = #{ticketId,jdbcType=INTEGER}
+  </update>
+  <delete id="removeOutOfDateTickets">
+    delete from train_ticket
+    where <![CDATA[ unix_timestamp(now()) > unix_timestamp(arrive_time) + 60 * 60 ]]>
+  </delete>
+  <delete id="delete">
+    delete from train_ticket where user_qq = #{userQq} and ticket_id = #{ticketId}
+  </delete>
+  <select id="findAndLock" resultType="de.honoka.qqrobot.farm.entity.farm.TrainTicket">
+    select <include refid="Base_Column_List" /> from train_ticket
+    where ticket_id = #{ticketId} and user_qq = #{qq} for update
+  </select>
+</mapper>

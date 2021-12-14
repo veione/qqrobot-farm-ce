@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.ChangeLocationRequestDao">
+  <sql id="Base_Column_List">
+    request_id, overdue_time, request_qq, success_time
+  </sql>
+  <select id="findAndLock" resultType="de.honoka.qqrobot.farm.entity.farm.ChangeLocationRequest">
+    select <include refid="Base_Column_List" /> from change_location_request
+    where request_id = #{id} for update
+  </select>
+  <select id="getAvaliableRequest" resultType="de.honoka.qqrobot.farm.entity.farm.ChangeLocationRequest">
+    select <include refid="Base_Column_List" /> from change_location_request
+    <![CDATA[
+      where request_qq = #{qq} and unix_timestamp(now()) < unix_timestamp(overdue_time)
+    ]]>
+    limit 1
+  </select>
+  <select id="getLatestSuccessRequest" resultType="de.honoka.qqrobot.farm.entity.farm.ChangeLocationRequest">
+    select <include refid="Base_Column_List" /> from change_location_request
+    where request_qq = #{qq} and success_time is not null
+    order by success_time desc limit 1
+  </select>
+</mapper>

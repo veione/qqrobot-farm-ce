@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.ExceptionRecordDao">
+  <sql id="Base_Column_List">
+    id, `datetime`, exception_text
+  </sql>
+  <select id="readException" resultType="de.honoka.qqrobot.farm.entity.system.ExceptionRecord">
+    select <include refid="Base_Column_List" /> from exception_record
+    order by `datetime` desc limit #{limit}
+  </select>
+</mapper>

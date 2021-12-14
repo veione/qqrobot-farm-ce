@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title th:text="'机器人使用情况 - ' + ${webConf.applicationName}">机器人使用情况</title>
+	<script type="text/javascript" th:src="@{/static/js/jquery-3.4.1.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/usageLog.js}"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/usageLog.css}">
+</head>
+<body>
+	<h1>使用记录</h1>
+	<div id="content">
+		<p style="text-align: left;">加载中……</p>
+	</div>
+	<div style="text-align: right; width: 80%; margin: 0 auto;">
+		<a th:href="@{/}">返回主页</a>
+	</div>
+</body>
+
+<script th:inline="javascript">
+    let contextPath = /*[[@{/}]]*/ "";
+    let page = /*[[${page}]]*/ 1;
+    window.onload = function() {
+        load(contextPath + "api/getUsageLog?page=" + page);
+    }
+</script>
+</html>

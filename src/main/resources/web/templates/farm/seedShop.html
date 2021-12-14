@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>种子商店</title>
+	<link rel="stylesheet" type="text/css" th:href="${baseUrl} + '/static/css/farm.css'">
+</head>
+<body>
+	<p>
+		种子商店 - <span th:text="${location.getFriendlyLocation()}">地名</span><br>
+		种子个数：<span th:text="${seeds.size()} + '/' +
+								${location.shopVolume}">1/10</span>
+	</p>
+	<table style="border: 0;">
+		<tr th:if="${seeds.size() <= 0}"><td>没有种子</td></tr>
+		<tr th:each="seed : ${seeds}">
+			<td th:text="${seed.seedId} + '.'">1.</td>
+			<td>
+				<img th:src="${baseUrl} + '/static/img/crop/' +
+							 ${encoder.encode(seed.type)} + '.png'" />
+			</td>
+			<td th:text="${seed.type}">种子名</td>
+			<td>【<span th:text="${nameTypeMap.get(seed.type).landform}">地形</span>】</td>
+			<td>【<span th:text="${nameTypeMap.get(seed.type).season}">季节</span>】</td>
+			<td>售价：<span th:text="${seed.price}">1000</span></td>
+		</tr>
+	</table>
+</body>
+</html>

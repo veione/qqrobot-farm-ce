@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.UserTaskDao">
+  <sql id="Base_Column_List">
+    task_id, finish_time, referenced_params, start_time, `type`, user_qq
+  </sql>
+  <select id="findAndLock" resultType="de.honoka.qqrobot.farm.entity.farm.UserTask">
+    select <include refid="Base_Column_List" /> from user_task
+    where task_id = #{taskId} for update
+  </select>
+  <select id="getLastInsertId" resultType="java.lang.Integer">
+    select last_insert_id();
+  </select>
+</mapper>

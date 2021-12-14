@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>作物</title>
+	<link rel="stylesheet" type="text/css"
+	      th:href="${baseUrl} + '/static/css/farm.css'">
+</head>
+<body>
+	<p>
+		作物 - <span th:text="${location.getFriendlyLocation()}">地名</span>【<span
+			th:text="${location.landform}">地形</span>】<br>
+		作物数量：<span th:text="${crops.size()}">1</span>/<span
+			th:text="${location.landSize}">10</span><br>
+		当前天气：<span th:text="${location.nowWeather}">小雨</span><br>
+		<p th:if="${landlordName != null}">
+			地主：<span th:text="${landlordName}">地主名</span><br>
+			租金：<span th:text="${location.rental}">1000</span>
+		</p>
+	</p>
+	<table style="border: 0;">
+		<tr th:if="${crops.size() <= 0}"><td>没有作物</td></tr>
+		<tr th:each="crop : ${crops}">
+			<td th:text="${crop.cropId} + '.'">1.</td>
+			<td th:switch="${crop}">
+				<img th:src="${cropService.getCropImageUrl(crop)}" />
+			</td>
+			<td>
+				<span th:utext="${cropService.getCropItemText(crop)}">作物名【状态】</span>
+			</td>
+			<td>水量：<span th:text="${crop.water}">100</span>/100&nbsp;</td>
+			<td>质量：<span th:text="${crop.growQuality}">100</span>/100</td>
+		</tr>
+	</table>
+</body>
+</html>

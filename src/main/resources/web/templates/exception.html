@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<title th:text="'异常信息记录 - ' + ${webConf.applicationName}">异常信息记录</title>
+	<script type="text/javascript" th:src="@{/static/js/exception.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/jquery-3.4.1.js}"></script>
+	<style type="text/css">
+		.box {
+			padding: 1em;
+			border: 1px solid black;
+			word-break: break-word;
+		}
+		.line {
+			margin: 0;
+		}
+	</style>
+</head>
+<body>
+	<h1>异常记录</h1>
+	<p>显示最近10条异常记录：</p>
+	<div id="content">
+		<span>加载中……</span>
+	</div>
+	<br>
+	<div style="text-align: right; width: 80%; margin: 0 auto;">
+		<a th:href="@{/}">返回主页</a>
+	</div>
+</body>
+
+<script th:inline="javascript">
+    let contextPath = /*[[@{/}]]*/ "";
+    window.onload = function() {
+        load(contextPath + "api/getException");
+    }
+</script>
+</html>

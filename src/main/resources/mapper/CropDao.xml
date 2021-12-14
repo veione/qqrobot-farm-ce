@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.CropDao">
+  <sql id="Base_Column_List">
+    location_id, crop_id, grow_quality, growth, last_time_grow, water, `type`
+  </sql>
+  <update id="update">
+    update crop set grow_quality = #{growQuality}, growth = #{growth},
+            last_time_grow = #{lastTimeGrow}, water = #{water},
+            `type` = #{type}
+    where location_id = #{locationId} and crop_id = #{cropId}
+  </update>
+  <delete id="delete">
+    delete from crop where location_id = #{locationId} and crop_id = #{cropId}
+  </delete>
+  <select id="getCountOfLocation" resultType="java.lang.Integer">
+    select count(1) from crop where location_id = #{locationId}
+  </select>
+  <select id="findAndLock" resultType="de.honoka.qqrobot.farm.entity.farm.Crop">
+    select <include refid="Base_Column_List" /> from crop
+    where crop_id = #{cropId} and location_id = #{locationId} for update
+  </select>
+  <select id="findVo" resultType="de.honoka.qqrobot.farm.model.vo.CropVo">
+    select c.location_id, c.crop_id, c.grow_quality, c.growth, c.last_time_grow,
+           c.water, c.`type`, l.now_weather as location_now_weather,
+           l.landform as location_landform, ct.season as type_season,
+           ct.landform as type_landform
+    from crop c
+    left join location l on c.location_id = l.location_id
+    left join crop_type ct on c.type = ct.name
+    where c.crop_id = #{cropId} and l.location_id = #{locationId}
+    <if test="lock"> for update </if>
+  </select>
+</mapper>

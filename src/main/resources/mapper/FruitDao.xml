@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="de.honoka.qqrobot.farm.database.dao.FruitDao">
+  <sql id="Base_Column_List">
+    user_qq, fruit_id, `type`
+  </sql>
+  <update id="update">
+    update fruit_bag set `type` = #{type}
+    where user_qq = #{userQq} and fruit_id = #{fruitId}
+  </update>
+  <delete id="delete">
+    delete from fruit_bag where user_qq = #{userQq} and fruit_id = #{fruitId}
+  </delete>
+  <select id="getCountOfUser" resultType="java.lang.Integer">
+    select count(1) from fruit_bag where user_qq = #{qq}
+  </select>
+  <select id="findAndLock" resultType="de.honoka.qqrobot.farm.entity.farm.Fruit">
+    select <include refid="Base_Column_List" /> from fruit_bag
+    where fruit_id = #{fruitId} and user_qq = #{qq} for update
+  </select>
+</mapper>
