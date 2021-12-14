@@ -24,4 +24,4 @@ spring:
 
 logging:
   level:
-    de.honoka.qqrobot.farm.dao: debug
+    de.honoka.qqrobot.farm.database.dao: debug
