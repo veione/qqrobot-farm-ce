@@ -138,24 +138,31 @@ public class LocationService {
     }
 
     @Scheduled(cron = "0 5/10 * * * ?")
-    @Transactional
     public synchronized void updateAllWeather() {
         List<Integer> idList = locationDao.findAllId();
         for(Integer id : idList) {
             try {
-                //更新前先加锁
-                Location location = locationDao.findAndLock(id);
-                location.updateWeather();
-                locationDao.updateById(location);
+                locationService.updateWeather(id);
             } catch(Exception e) {
                 reporter.sendExceptionToDevelopingGroup(e);
             }
         }
     }
 
+    @Transactional
+    public void updateWeather(int id) {
+        //更新前先加锁
+        Location location = locationDao.findAndLock(id);
+        location.updateWeather();
+        locationDao.updateById(location);
+    }
+
     public LocationService(ListRunner initer) {
         initer.add(this::updateAllWeather);
     }
+
+    @Resource
+    private LocationService locationService;
 
     @Resource
     private LocationDao locationDao;

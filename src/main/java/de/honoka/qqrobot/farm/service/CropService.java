@@ -109,7 +109,6 @@ public class CropService {
         return "种植成功";
     }
 
-    @Transactional
     public String sowSeed(long qq, int[] seedIds) {
         User u = userDao.selectById(qq);
         if(u == null) return StaticMessages.notRegistered;
@@ -118,7 +117,7 @@ public class CropService {
         //依次执行播种
         for(int id : seedIds) {
             try {
-                String replyOfOnce = sowSeed(qq, id);
+                String replyOfOnce = cropService.sowSeed(qq, id);
                 if(replyOfOnce.contains("种植成功"))
                     sowedSeed.append(id).append(" ");
                 else
@@ -230,7 +229,6 @@ public class CropService {
                 u.getMaxWaterRemaining();
     }
 
-    @Transactional
     public String watering(long qq, int[] cropIds) {
         User u = userDao.selectById(qq);
         if(u == null) return StaticMessages.notRegistered;
@@ -239,7 +237,7 @@ public class CropService {
         //依次执行浇水
         for(int id : cropIds) {
             try {
-                String replyOfOnce = watering(qq, id);
+                String replyOfOnce = cropService.watering(qq, id);
                 if(replyOfOnce.contains("浇水成功"))
                     wateredCrop.append(id).append(" ");
                 else {
@@ -291,7 +289,6 @@ public class CropService {
         return "收获成功";
     }
 
-    @Transactional
     public String harvest(long qq, int[] cropIds) {
         User u = userDao.selectById(qq);
         if(u == null) return StaticMessages.notRegistered;
@@ -300,7 +297,7 @@ public class CropService {
         //依次执行收获
         for(int id : cropIds) {
             try {
-                String replyAtOnce = harvest(qq, id);
+                String replyAtOnce = cropService.harvest(qq, id);
                 if(replyAtOnce.contains("收获成功"))
                     harvestedCrop.append(id).append(" ");
                 else
@@ -330,7 +327,6 @@ public class CropService {
         return "清除成功";
     }
 
-    @Transactional
     public String remove(long qq, int[] cropIds) {
         User u = userDao.selectById(qq);
         if(u == null) return StaticMessages.notRegistered;
@@ -339,7 +335,7 @@ public class CropService {
         //依次执行清除
         for(int id : cropIds) {
             try {
-                String replyOfOnce = remove(qq, id);
+                String replyOfOnce = cropService.remove(qq, id);
                 if(replyOfOnce.contains("清除成功"))
                     removedCrop.append(id).append(" ");
                 else

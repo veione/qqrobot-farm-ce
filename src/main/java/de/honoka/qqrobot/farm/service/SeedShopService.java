@@ -9,6 +9,7 @@ import de.honoka.qqrobot.farm.database.service.SeedShopDbService;
 import de.honoka.qqrobot.farm.entity.farm.*;
 import de.honoka.qqrobot.farm.util.ExtendImageUtils;
 import de.honoka.qqrobot.farm.util.IdGenerator;
+import de.honoka.qqrobot.farm.util.MessageUtils;
 import de.honoka.qqrobot.farm.web.WebConfigurations;
 import de.honoka.qqrobot.spring.boot.starter.component.ExceptionReporter;
 import de.honoka.util.various.ListRunner;
@@ -27,7 +28,7 @@ import static com.sobte.cqp.jcq.event.JcqApp.CC;
 @Service
 public class SeedShopService {
 
-    //public static final int SHOP_VOLUME = 10;		//种子商店的容量
+    public static final int ERROR_MSG_LIMIT = 3;    //批量操作时，回复错误消息的最大数量
 
     public String getShop(long qq) {
         User u = userDao.selectById(qq);
@@ -117,29 +118,31 @@ public class SeedShopService {
         return "购买成功，你的资金余额为：" + u.getAssets();
     }
 
-    @Transactional
     public String buySeed(long qq, int[] seedIds) {
         User u = userDao.selectById(qq);
         if(u == null) return StaticMessages.notRegistered;
         StringBuilder boughtSeed = new StringBuilder();        //已购买的种子编号
-        String replyOfOnce = null;        //单次购买得到的回复
+        List<String> errors = new ArrayList<>();
         //依次执行购买
         for(int id : seedIds) {
-            replyOfOnce = "";
             try {
-                replyOfOnce = buySeed(qq, id);
+                String replyOfOnce = seedShopService.buySeed(qq, id);
+                if(replyOfOnce.contains("购买成功")) {
+                    boughtSeed.append(id).append(" ");
+                    continue;
+                }
+                errors.add(id + "." + replyOfOnce);
+                if(replyOfOnce.contains("资金不足") || replyOfOnce
+                        .contains("背包已满")) break;
             } catch(Exception e) {
                 reporter.sendExceptionToDevelopingGroup(e);
             }
-            if(replyOfOnce.contains("购买成功"))
-                boughtSeed.append(id).append(" ");
-            if(replyOfOnce.contains("资金不足") || replyOfOnce
-                    .contains("背包已满")) break;
         }
         String boughtSeedStr = boughtSeed.toString().trim();
         //查询购买后资金
         u = userDao.selectById(qq);
-        if(boughtSeedStr.equals("")) return replyOfOnce;
+        if(boughtSeedStr.equals(""))
+            return MessageUtils.getMultiLineMsg(errors, ERROR_MSG_LIMIT);
         return "你成功购买了编号为" + boughtSeedStr +
                 "的种子，资金余额为：" + u.getAssets();
     }

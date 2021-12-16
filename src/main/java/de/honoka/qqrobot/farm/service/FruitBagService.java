@@ -73,7 +73,6 @@ public class FruitBagService {
         return reply;
     }
 
-    @Transactional
     public String sell(long qq, int[] fruitIds) {
         User u = userDao.selectById(qq);
         if(u == null) return StaticMessages.notRegistered;
@@ -82,7 +81,7 @@ public class FruitBagService {
         int priceCount = 0;
         //依次执行卖出
         for(int id : fruitIds) {
-            replyOfOnce = sell(qq, id);
+            replyOfOnce = fruitBagService.sell(qq, id);
             if(replyOfOnce.contains("卖出成功")) {
                 String priceStr = replyOfOnce.substring(replyOfOnce
                         .indexOf("获得资金") + "获得资金".length());
@@ -94,6 +93,9 @@ public class FruitBagService {
         if(soldFruitStr.equals("")) return replyOfOnce;
         return "你成功卖出了编号为" + soldFruitStr + "的作物，获得资金" + priceCount;
     }
+
+    @Resource
+    private FruitBagService fruitBagService;
 
     @Resource
     private LocationDao locationDao;
