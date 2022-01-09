@@ -6,7 +6,6 @@ import de.honoka.qqrobot.framework.Framework;
 import de.honoka.qqrobot.spring.boot.starter.component.RobotAttributes;
 import de.honoka.standard.system.ConsoleWindow;
 import de.honoka.util.file.FileUtils;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +18,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
 
-@MapperScan("de.honoka.qqrobot.farm.database.dao")
 @SpringBootApplication
 public class QqRobotFarm {
 

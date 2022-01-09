@@ -50,7 +50,7 @@ public class FunctionController {
             case "移除":
                 return compensationService.removeRequest(requestId);
             default:
-                return attributes.wrongParameterMsg;
+                return RobotAttributes.wrongParameterMsg;
         }
     }
 

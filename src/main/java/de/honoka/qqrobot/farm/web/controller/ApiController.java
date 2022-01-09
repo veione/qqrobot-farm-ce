@@ -8,25 +8,52 @@ import de.honoka.qqrobot.farm.database.dao.ExceptionRecordDao;
 import de.honoka.qqrobot.farm.database.dao.UsageLogDao;
 import de.honoka.qqrobot.farm.entity.system.ExceptionRecord;
 import de.honoka.qqrobot.farm.entity.system.UsageLog;
+import de.honoka.qqrobot.farm.service.SystemService;
 import de.honoka.qqrobot.farm.system.ExtendRobotAttributes;
 import de.honoka.qqrobot.farm.util.JsonMaker;
-import de.honoka.qqrobot.farm.web.interceptor.LoginInterceptor;
+import de.honoka.qqrobot.farm.web.common.ApiResponse;
 import de.honoka.qqrobot.spring.boot.starter.component.RobotAttributes;
-import lombok.SneakyThrows;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import de.honoka.qqrobot.spring.boot.starter.component.RobotBeanHolder;
+import de.honoka.standard.system.SystemInfoBean;
+import de.honoka.util.code.ActionUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api")
 public class ApiController {
 
     private static final int USAGE_LOG_PAGE_SIZE = 20,    //使用记录的每页记录条数
             EXCEPTION_RECORD_MAX_SIZE = 10;    //异常信息最大显示条数
+
+    @RequestMapping("/action/sendTestMessage")
+    public ApiResponse<?> sendTestMessage() {
+        ActionUtils.doAction("发送测试消息", systemService::sendTestMessage);
+        return ApiResponse.success(null, null);
+    }
+
+    @RequestMapping("/action/relogin")
+    public ApiResponse<?> relogin() {
+        ActionUtils.doAction("重新登录", robotBeanHolder.getFramework()
+                ::reboot);
+        return ApiResponse.success(null, null);
+    }
+
+    @GetMapping("/main")
+    public ApiResponse<?> mainInfo() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("system_info", new SystemInfoBean());
+        data.put("will_send_test_message_on_relogin", ExtendRobotAttributes
+                .willSendTestMessageOnRelogin);
+        data.put("will_resend_on_send_failed", ExtendRobotAttributes
+                .willResendOnSendFailed);
+        return ApiResponse.success(null, data);
+    }
 
     @RequestMapping("/switchWillResendOnSendFailed")
     public String switchWillResendOnSendFailed() {
@@ -42,25 +69,7 @@ public class ApiController {
         return JsonMaker.statusAndValue(true, null).toString();
     }
 
-    @RequestMapping("/checkLogin")
-    public String checkLogin(
-            @RequestParam("robot_username") String username,
-            @RequestParam("robot_password") String password,
-            HttpSession session) {
-        //判断登录状态
-        boolean alreayLogin = loginInterceptor.checkLoginStatus(session);
-        //判断用户名密码
-        boolean checkPassed = username.equals("robot_admin") &&
-                password.equals(ExtendRobotAttributes.WEB_LOGIN_PASSWORD);
-        //若未登录，且密码正确，添加登录状态
-        if(!alreayLogin && checkPassed)
-            session.setAttribute("loginUUID", password);
-        //回应是否已登录，以及密码是否正确
-        return JsonMaker.arbitrary("check_passed", checkPassed).toString();
-    }
-
     @RequestMapping("/getException")
-    @SneakyThrows
     public String getException() {
         List<ExceptionRecord> list = exceptionRecordDao.readException(
                 EXCEPTION_RECORD_MAX_SIZE);
@@ -71,7 +80,6 @@ public class ApiController {
     }
 
     @RequestMapping("/getUsageLog")
-    @SneakyThrows
     public String getUsageLog(
             @RequestParam(required = false, defaultValue = "1") int page) {
         int maxPage;
@@ -111,13 +119,16 @@ public class ApiController {
     }
 
     @Resource
+    private RobotBeanHolder robotBeanHolder;
+
+    @Resource
+    private SystemService systemService;
+
+    @Resource
     private UsageLogDao usageLogDao;
 
     @Resource
     private ExceptionRecordDao exceptionRecordDao;
-
-    @Resource
-    private LoginInterceptor loginInterceptor;
 
     @Resource
     private RobotAttributes attributes;

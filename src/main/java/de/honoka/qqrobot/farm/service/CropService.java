@@ -42,13 +42,13 @@ public class CropService {
     public String getCropImageUrl(Crop crop) {
         String baseUrl = webConf.getApplicationBaseUrl();
         if(crop.isBroken()) {
-            return baseUrl + "/static/img/level/broken.png";
+            return baseUrl + "/robot/static/img/level/broken.png";
         } else if(crop.isRiped()) {
-            return baseUrl + "/static/img/crop/" +
+            return baseUrl + "/robot/static/img/crop/" +
                     URLEncoder.encode(crop.getType(), StandardCharsets.UTF_8) +
                     ".png";
         } else {
-            return baseUrl + "/static/img/level/a" + crop.getGrowth() + ".png";
+            return baseUrl + "/robot/static/img/level/a" + crop.getGrowth() + ".png";
         }
     }
 
@@ -103,7 +103,7 @@ public class CropService {
         //收取租金
         if(willCollectRent) {
             u.reduceAssets(location.getRental());
-            userDao.plusAssets(location.getLandlordQq(), location.getLocationId());
+            userDao.plusAssets(location.getLandlordQq(), location.getRental());
         }
         userDao.updateById(u);
         return "种植成功";

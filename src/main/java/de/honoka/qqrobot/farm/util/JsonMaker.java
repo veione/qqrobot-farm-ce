@@ -3,6 +3,9 @@ package de.honoka.qqrobot.farm.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 快速得到Json内容
  */
@@ -37,6 +40,20 @@ public class JsonMaker {
             }
         }
         return jo;
+    }
+
+    public static Map<String, Object> arbitraryMap(Object... args) {
+        Map<String, Object> map = new HashMap<>();
+        for(int i = 0; i < args.length; i++) {
+            String key = args[i].toString();
+            if(i + 1 < args.length) {
+                i++;
+                map.put(key, args[i]);
+            } else {
+                map.put(key, null);
+            }
+        }
+        return map;
     }
 
     /**

@@ -1,33 +1,28 @@
 package de.honoka.qqrobot.farm.web.interceptor;
 
 import de.honoka.qqrobot.farm.system.ExtendRobotAttributes;
-import de.honoka.qqrobot.farm.web.WebConfigurations;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 @Component
-public class LoginInterceptor implements HandlerInterceptor {
+public class LoginInterceptor extends BaseInterceptor {
 
-    public final List<String>
-            pathPatterns = Collections.singletonList("/**"),
-            excludePathPatterns = Arrays.asList(
-                    "/static/**", "/login", "/api/checkLogin", "/farm/**",
-                    "/text", "/changeLocation", "/register");
-
-    public boolean checkLoginStatus(HttpSession session) {
-        String uuid = (String) session.getAttribute("loginUUID");
-        return uuid != null && uuid.equals(ExtendRobotAttributes.WEB_LOGIN_PASSWORD);
+    public LoginInterceptor() {
+        pathPatterns = Collections.singletonList("/**");
+        excludePathPatterns = Arrays.asList(
+                "/static/**", "/login", "/api/vue-admin/login", "/farm/**",
+                "/text", "/changeLocation", "/register", "/robot/static/**",
+                "/", "/favicon.ico", "/index.html"
+        );
     }
 
     /**
@@ -40,10 +35,13 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(@NotNull HttpServletRequest request,
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
-        HttpSession session = request.getSession();
-        boolean status = checkLoginStatus(session);
-        if(!status) {
-            response.sendRedirect(webConf.getContextPath() + "/login");
+        if(request.getMethod().toLowerCase(Locale.ROOT).equals("options"))
+            return true;
+        String token = request.getHeader("X-Token");
+        if(!Objects.equals(token, ExtendRobotAttributes.WEB_LOGIN_PASSWORD)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().println("请登录");
             return false;
         }
         return true;
@@ -68,7 +66,4 @@ public class LoginInterceptor implements HandlerInterceptor {
                                 @NotNull Object handler, Exception ex) {
 
     }
-
-    @Resource
-    private WebConfigurations webConf;
 }
